@@ -8,6 +8,7 @@ namespace ECC_Tests.Core
     {
         public static ECPoint ToAffine(this EllipticCurve curve, JacobianPoint jacobianPoint)
         {
+            if (jacobianPoint.z == 0) return ECPoint.POINT_INFINITY;
             BigInteger p = curve.field;
             BigInteger Z2 = (jacobianPoint.z * jacobianPoint.z) % p;
 
@@ -18,24 +19,26 @@ namespace ECC_Tests.Core
             return new ECPoint(X, Y);
         }
 
-        public static ECPoint ToAffine(this EllipticCurve curve, JacobianChudnovskyPoint jacobianPoint)
+        public static ECPoint ToAffine(this EllipticCurve curve, JacobianChudnovskyPoint jacobianChudnovskyPoint)
         {
+            if (jacobianChudnovskyPoint.z == 0) return ECPoint.POINT_INFINITY;
             BigInteger p = curve.field;
-            BigInteger X = (jacobianPoint.x * jacobianPoint.z2.Inverse(p)) % p;
+            BigInteger X = (jacobianChudnovskyPoint.x * jacobianChudnovskyPoint.z2.Inverse(p)) % p;
 
-            BigInteger Y = (jacobianPoint.y * jacobianPoint.z3.Inverse(p)) % p;
+            BigInteger Y = (jacobianChudnovskyPoint.y * jacobianChudnovskyPoint.z3.Inverse(p)) % p;
             return new ECPoint(X, Y);
         }
 
-        public static ECPoint ToAffine(this EllipticCurve curve, ModifiedJacobianPoint jacobianPoint)
+        public static ECPoint ToAffine(this EllipticCurve curve, ModifiedJacobianPoint modifiedJacobianPoint)
         {
+            if (modifiedJacobianPoint.z == 0) return ECPoint.POINT_INFINITY;
             BigInteger p = curve.field;
-            BigInteger Z2 = (jacobianPoint.z * jacobianPoint.z) % p;
+            BigInteger Z2 = (modifiedJacobianPoint.z * modifiedJacobianPoint.z) % p;
 
-            BigInteger Z3 = (Z2 * jacobianPoint.z) % p;
-            BigInteger X = (jacobianPoint.x * Z2.Inverse(p)) % p;
+            BigInteger Z3 = (Z2 * modifiedJacobianPoint.z) % p;
+            BigInteger X = (modifiedJacobianPoint.x * Z2.Inverse(p)) % p;
 
-            BigInteger Y = (jacobianPoint.y * Z3.Inverse(p)) % p;
+            BigInteger Y = (modifiedJacobianPoint.y * Z3.Inverse(p)) % p;
             return new ECPoint(X, Y);
         }
 
@@ -67,7 +70,7 @@ namespace ECC_Tests.Core
 
         public static ModifiedJacobianPoint ToModifiedJacobian(this EllipticCurve curve, ECPoint affinePoint)
         {
-            ModifiedJacobianPoint jacobianPoint = new ModifiedJacobianPoint
+            ModifiedJacobianPoint modifiedJacobianPoint = new ModifiedJacobianPoint
             {
                 x = affinePoint.GetAffineX(),
                 y = affinePoint.GetAffineY(),
@@ -75,7 +78,7 @@ namespace ECC_Tests.Core
                 z = 1
             };
 
-            return jacobianPoint;
+            return modifiedJacobianPoint;
         }
     }
 }

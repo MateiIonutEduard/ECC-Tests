@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace ECC_Tests.Utils
 {
+    /* Hankerson, D.R., Vanstone, S.A., Menezes, A.J. (2004): Guide to elliptic curve cryptography. Springer, New York, NY. */
     public static class JacobianMath
     {
         public static JacobianPoint Add(EllipticCurve curve, JacobianPoint left, JacobianPoint right)

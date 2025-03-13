@@ -17,6 +17,8 @@ namespace ECC_Tests
 
             ECPoint basePoint = curve.BasePoint;
             JacobianPoint jacobianPoint = curve.ToJacobian(basePoint);
+
+            JacobianChudnovskyPoint jacobianChudnovskyPoint = curve.ToJacobianChudnovsky(basePoint);
             ModifiedJacobianPoint modifiedJacobianPoint =  curve.ToModifiedJacobian(basePoint);
 
             var clock = new Stopwatch();
@@ -35,6 +37,13 @@ namespace ECC_Tests
 
             Console.WriteLine($"total time for Jacobian projective coordinates multiplication: {clock.Elapsed.Milliseconds} ms");
             ECPoint affinePoint2 = curve.ToAffine(final2);
+
+            clock.Restart();
+            var final3 = Multiply(curve, k, jacobianChudnovskyPoint);
+            clock.Stop();
+
+            Console.WriteLine($"total time for Jacobian-Chudnovsky projective coordinates multiplication: {clock.Elapsed.Milliseconds} ms");
+            ECPoint affinePoint3 = curve.ToAffine(final3);
 
             clock.Restart();
             ECPoint baseKPoint = ECMath.Multiply(curve, k, basePoint);
@@ -70,6 +79,22 @@ namespace ECC_Tests
                     res = JacobianMath.Add(curve, res, basePoint);
 
                 basePoint = JacobianMath.Doubling(curve, basePoint);
+            }
+
+            return res;
+        }
+
+        static JacobianChudnovskyPoint Multiply(EllipticCurve curve, BigInteger sk, JacobianChudnovskyPoint point)
+        {
+            JacobianChudnovskyPoint res = JacobianChudnovskyPoint.POINT_INFINITY;
+            JacobianChudnovskyPoint basePoint = point;
+
+            for (int k = 0; k < sk.GetBits(); k++)
+            {
+                if (sk.TestBit(k))
+                    res = JacobianChudnovskyMath.Add(curve, res, basePoint);
+
+                basePoint = JacobianChudnovskyMath.Doubling(curve, basePoint);
             }
 
             return res;

@@ -10,5 +10,19 @@ namespace ECC_Tests.Core
         public BigInteger x { get; set; }
         public BigInteger y { get; set; }
         public BigInteger z { get; set; }
+
+        public static JacobianPoint POINT_INFINITY
+        {
+            get
+            {
+                /* Represents the point at infinity to the Weierstrass curve */
+                return new JacobianPoint
+                {
+                    x = 1,
+                    y = 1,
+                    z = 0
+                };
+            }
+        }
     }
 }

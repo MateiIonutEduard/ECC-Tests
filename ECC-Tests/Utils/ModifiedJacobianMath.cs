@@ -14,34 +14,34 @@ namespace ECC_Tests.Utils
             if (right.z == 0) return left;
 
             BigInteger p = curve.field;
-            BigInteger ZZ1 = (left.z * left.z) % p;
-            BigInteger ZZ2 = (right.z * right.z) % p;
+            BigInteger A1 = (left.z * left.z) % p;
+            BigInteger A2 = (right.z * right.z) % p;
 
-            BigInteger U1 = (left.x * ZZ2) % p;
-            BigInteger U2 = (right.x * ZZ1) % p;
+            BigInteger A3 = (left.x * A2) % p;
+            BigInteger A4 = (right.x * A1) % p;
 
-            BigInteger S1 = (left.y * right.z * ZZ2) % p;
-            BigInteger S2 = (right.y * left.z * ZZ1) % p;
+            BigInteger A5 = (left.y * right.z * A2) % p;
+            BigInteger A6 = (right.y * left.z * A1) % p;
 
-            BigInteger H = (U2 - U1) % p;
-            if (H < 0) H += p;
+            BigInteger A7 = (A4 - A3) % p;
+            if (A7 < 0) A7 += p;
 
-            BigInteger HH = (H * H) % p;
-            BigInteger HHH = (H * HH) % p;
+            BigInteger A8 = (A7 * A7) % p;
+            BigInteger A9 = (A7 * A8) % p;
 
-            BigInteger r = (S2 - S1) % p;
-            if (r < 0) r += p;
-            BigInteger V = (U1 * HH) % p;
+            BigInteger A10 = (A6 - A5) % p;
+            if (A10 < 0) A10 += p;
+            BigInteger A11 = (A3 * A8) % p;
 
-            BigInteger X = (r * r - HHH - 2 * V) % p;
+            BigInteger X = (A10 * A10 - A9 - 2 * A11) % p;
             if (X < 0) X += p;
 
-            BigInteger Y = (r * (V - X) - S1 * HHH) % p;
+            BigInteger Y = (A10 * (A11 - X) - A5 * A9) % p;
             if (Y < 0) Y += p;
 
-            BigInteger Z = (left.z * right.z * H) % p;
-            BigInteger ZZ = (Z * Z) % p;
-            BigInteger aZ4 = (curve.a * ZZ) % p;
+            BigInteger Z = (left.z * right.z * A7) % p;
+            BigInteger Z2 = (Z * Z) % p;
+            BigInteger aZ4 = (curve.a * Z2) % p;
 
             return new ModifiedJacobianPoint
             {
@@ -56,22 +56,22 @@ namespace ECC_Tests.Utils
         {
             if (jacobianPoint.z == 0) return ModifiedJacobianPoint.POINT_INFINITY;
             BigInteger p = curve.field;
-            BigInteger XX = (jacobianPoint.x * jacobianPoint.x) % p;
+            BigInteger A1 = (jacobianPoint.x * jacobianPoint.x) % p;
 
-            BigInteger YY = (jacobianPoint.y * jacobianPoint.y) % p;
-            BigInteger U = (8 * YY * YY) % p;
+            BigInteger A2 = (jacobianPoint.y * jacobianPoint.y) % p;
+            BigInteger A3 = (8 * A2 * A2) % p;
 
-            BigInteger S = (4 * jacobianPoint.x * YY) % p;
-            BigInteger M = (3 * XX + jacobianPoint.aZ4) % p;
+            BigInteger A4 = (4 * jacobianPoint.x * A2) % p;
+            BigInteger A5 = (3 * A1 + jacobianPoint.aZ4) % p;
 
-            BigInteger X = (M * M - 2 * S) % p;
+            BigInteger X = (A5 * A5 - 2 * A4) % p;
             if (X < 0) X += p;
 
-            BigInteger Y = (M * (S - X) - U) % p;
+            BigInteger Y = (A5 * (A4 - X) - A3) % p;
             if (Y < 0) Y += p;
 
             BigInteger Z = (2 * jacobianPoint.y * jacobianPoint.z) % p;
-            BigInteger aZ4 = (2 * U * jacobianPoint.aZ4) % p;
+            BigInteger aZ4 = (2 * A3 * jacobianPoint.aZ4) % p;
 
             return new ModifiedJacobianPoint
             {
